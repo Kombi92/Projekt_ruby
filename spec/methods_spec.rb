@@ -59,10 +59,39 @@ end
 
 describe Menu do
   let(:wielomian) { Wielomian.new(0.001, [-2.0, 2.0]) }
-  let(:wielomian2) { Wielomian.new(0.5, [2.0, 2.0]) }
+  let(:wielomian2) { Wielomian.new(0.1, [-0.18, 0.83]) }
   let(:menu) { Menu.new }
+  describe '#start' do
+    before do
+      allow($stdout).to receive(:write) {}
+    end
+    it 'should be described' do
+      allow(menu).to receive(:gets).and_return('0.001','n')
+      expect { menu.start }.not_to raise_error
+    end
+  end
 
-
+  describe '#count' do
+    before do
+      allow($stdout).to receive(:write) {}
+    end
+    it 'should be described' do
+      expect { menu.count(wielomian) }.not_to raise_error
+    end
+    it 'should restart when interval is bad' do
+      allow(menu).to receive(:gets).and_return('0.001','n')
+      expect { menu.count(wielomian2) }.not_to raise_error
+    end
+    before do
+      menu.count(wielomian)
+    end
+    it 'should count bisection' do
+      expect(wielomian.bis).not_to eq(nil)
+    end
+    it 'should count newton' do
+      expect(wielomian.newt).not_to eq(nil)
+    end
+  end
 
   describe '#podaj_dokladnosc' do
     before do
@@ -72,9 +101,41 @@ describe Menu do
       allow(menu).to receive(:gets).and_return('0.001')
       expect { menu.podaj_dokladnosc }.not_to raise_error
     end
+    it 'should not accept wrong value' do
+      allow(menu).to receive(:gets).and_return('1.2','1','0.01')
+      menu.podaj_dokladnosc
+      expect(menu).to have_received(:gets).exactly(3).times
+    end
   end
 
-  describe '#przedzial?' do
+  describe '#podaj_przedzial' do
+    before do
+      allow($stdout).to receive(:write) {}
+    end
+    it 'should be described' do
+      allow(menu).to receive(:gets).and_return('-2.0','2.0')
+      expect { menu.podaj_przedzial }.not_to raise_error
+    end
+  end
+
+  describe 'sprawdz_przedzial' do
+    before do
+      allow($stdout).to receive(:write) {}
+    end
+    it 'should be described' do
+      expect { menu.sprawdz_przedzial(-2.0,2.0) }.not_to raise_error
+    end
+    it 'should check ends' do
+      allow(menu).to receive(:gets).and_return('-1.0','1.0')
+      expect(menu.sprawdz_przedzial(2.0,-2.0)).to eq([-1.0,1.0])
+    end
+    it 'should check signs' do
+      allow(menu).to receive(:gets).and_return('-1.0','1.0')
+      expect(menu.sprawdz_przedzial(-2.0,-2.0)).to eq([-1.0,1.0])
+    end
+  end
+
+  describe 'przedzial?' do
     before do
       allow($stdout).to receive(:write) {}
     end
@@ -82,30 +143,25 @@ describe Menu do
       allow(menu).to receive(:gets).and_return('n')
       expect { menu.przedzial? }.not_to raise_error
     end
+    it 'should use default' do
+      allow(menu).to receive(:gets).and_return('n')
+      c = menu.przedzial?
+      expect(c).to eq([-2.0,2.0])
+    end
+    it 'should allow input when asked' do
+      allow(menu).to receive(:gets).and_return('t','-3.0','2.0')
+      c = menu.przedzial?
+      expect(c).to eq([-3.0,2.0])
+    end
   end
 
-  describe '#count' do
+  describe 'restart?' do
+    before do
+      allow($stdout).to receive(:write) {}
+    end
     it 'should be described' do
-      expect { menu.count(wielomian) }.not_to raise_error
-    end
-    it 'should be described2' do
-      expect { menu.count(wielomian2) }.not_to raise_error
+      allow(menu).to receive(:gets).and_return('n')
+      expect { menu.restart? }.not_to raise_error
     end
   end
-
-  describe '#sprawdz_przedzial' do
-    it 'should be described' do
-      expect { menu.sprawdz_przedzial(-1,2) }.not_to raise_error
-    end
-    it 'should work properly' do
-      expect { menu.sprawdz_przedzial(0,2) }.to raise_error
-    end
-  end
-
-
-   # it 'should be described2' do
-   #   allow(menu).to receive(:gets).and_return('2')
-   #   expect { menu.podaj_dokladnosc }.not_to raise_error
-   # end
-  end
-
+end

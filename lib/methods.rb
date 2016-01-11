@@ -1,6 +1,6 @@
 # Klasa obsługująca wszystkie działania na wielomianie
 class Wielomian
-  attr_accessor :bis, :newt, :bp, :np
+  attr_accessor :bis, :newt, :bp, :np, :epsilon
   def initialize(a, c)
     @epsilon = a
     @limit = 10_000
@@ -63,7 +63,7 @@ end
 # Klasa obługująca porozumiewanie się z użytkownikiem
 class Menu
   def start
-    puts 'Rozwiązywane równanie: x^5 + x - 10'
+    puts 'Obliczany przykład: x^5 + x - 10'
     a = podaj_dokladnosc
     c = przedzial?
     wielomian = Wielomian.new(a, c)
@@ -78,7 +78,7 @@ class Menu
   def count(obj)
     obj.newton_raphson
     obj.bisekcja
-    return unless (obj.bis - obj.newt).abs > 0.9
+    return unless (obj.bis - obj.newt).abs > 0.1
     puts 'Podano błędny przedział, zaczynam od początku'
     start
   end
